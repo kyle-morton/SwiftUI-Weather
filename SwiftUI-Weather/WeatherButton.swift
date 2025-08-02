@@ -13,18 +13,26 @@ struct WeatherButton: View {
     var textColor: Color
     var backgroundColor: Color
     
+    @Binding var value: Bool
+    
     var body: some View {
         
         Button {
-            print("tapped")
+            value.toggle()
         } label: {
             Text(title)
                 .frame(width: 280, height: 50)
-                .background(backgroundColor)
+                .background(backgroundColor.gradient)
                 .foregroundColor(textColor)
                 .font(.system(size: 20, weight: .bold))
                 .cornerRadius(10)
         }
         
     }
+}
+
+#Preview {
+    @Previewable @State var value = false
+    WeatherButton(title: value ? "Button - On" : "Button - Off", textColor: Color.white, backgroundColor: Color.blue, value: $value)
+    
 }

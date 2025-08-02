@@ -8,7 +8,7 @@
 /*
  
  CHALLENGES
- 1) Create a data model of the weather day (dayOfTheWeek, imageName, temp)
+ 1) Create a data model of the weather day (dayOfTheWeek, imageName, temp) - DONE
  2) Find a basic weather API and pull the weather data dynamically
  3) Tab view different cities?
  */
@@ -39,28 +39,22 @@ struct ContentView: View {
                 )
                     
                 HStack(spacing:20) {
-                    WeatherDayView(dayOfTheWeek: "TUE", imageName: "cloud.sun.fill", temperature: 78)
-                    WeatherDayView(dayOfTheWeek: "WED", imageName: "sun.max.fill", temperature: 81)
-                    WeatherDayView(dayOfTheWeek: "THU", imageName: "cloud.drizzle.fill", temperature: 75)
-                    WeatherDayView(dayOfTheWeek: "FRI", imageName: "cloud.sun.rain.fill", temperature: 79)
-                    WeatherDayView(dayOfTheWeek: "SAT", imageName: "sun.max.fill", temperature: 83)
+                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "TUE", imageName: "cloud.sun.fill", temperature: 78))
+                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "WED", imageName: "sun.max.fill", temperature: 81))
+                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "THU", imageName: "cloud.drizzle.fill", temperature: 75))
+                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "FRI", imageName: "cloud.sun.rain.fill", temperature: 79))
+                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "SAT", imageName: "sun.max.fill", temperature: 83))
                 }
                 
                 Spacer()
-//            
-//                WeatherButton(title: "Change Day Time", textColor: .blue, backgroundColor: .white)
-//                
-                Button {
-                    isNight.toggle()
-                } label: {
-                    Text("Change Day Time")
-                        .frame(width: 280, height: 50)
-                        .background(.white)
-                        .foregroundColor(Color.blue)
-                        .font(.system(size: 20, weight: .bold))
-                        .cornerRadius(10)
-                }
-                
+            
+                WeatherButton(
+                    title: "Change Day Time",
+                    textColor: .blue,
+                    backgroundColor: .white,
+                    value: $isNight
+                )
+
                 Spacer()
             }
         }
@@ -77,15 +71,20 @@ struct BackgroundView: View {
 
     var body: some View {
         
-        // You can add as many colors to the array (it's really cool)
-        LinearGradient(
-            colors: [isNight
-                     ? Color.black : Color.blue,
-                     isNight
-                     ? Color.gray : Color("LightBlue")],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing)
-        .ignoresSafeArea()
+//        // You can add as many colors to the array (it's really cool) - for stuff that needs a little more custimazation (iOS 16 introduced color.x.gridiant)
+//        LinearGradient(
+//            colors: [isNight
+//                     ? Color.black : Color.blue,
+//                     isNight
+//                     ? Color.gray : Color("LightBlue")],
+//            startPoint: .topLeading,
+//            endPoint: .bottomTrailing)
+//        .ignoresSafeArea()
+        
+        ContainerRelativeShape()
+            .fill(isNight ? Color.black.gradient : Color.blue.gradient)
+            .ignoresSafeArea()
+        
     }
 }
 
@@ -122,16 +121,14 @@ struct MainWeatherStatusView: View {
 
 struct WeatherDayView: View {
     
-    var dayOfTheWeek: String
-    var imageName: String
-    var temperature: Int
+    var day: WeatherDay
     
     var body: some View {
         VStack {
-            Text(dayOfTheWeek)
+            Text(day.dayOfTheWeek)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.white)
-            Image(systemName: imageName)
+            Image(systemName: day.imageName)
                 .symbolRenderingMode(.multicolor)
 //                .renderingMode(.original) // converts it from black to a color icon (iOS 14 and below)
                 .resizable()
@@ -139,7 +136,7 @@ struct WeatherDayView: View {
 //                .foregroundStyle(.pink, .orange, .blue)
                 .aspectRatio(contentMode: .fit ) // forces the image to fit it's aspect ratio into the container (our frame below)
                 .frame(width:40, height: 40)
-            Text("\(temperature)°")
+            Text("\(day.temperature)°")
                 .font(.system(size: 28, weight: .medium))
                 .foregroundColor(.white)
         }
