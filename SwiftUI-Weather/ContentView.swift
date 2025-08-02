@@ -10,7 +10,7 @@
  CHALLENGES
  1) Create a data model of the weather day (dayOfTheWeek, imageName, temp)
  2) Find a basic weather API and pull the weather data dynamically
- 3) Tab view different cities? 
+ 3) Tab view different cities?
  */
 
 
@@ -27,7 +27,7 @@ struct ContentView: View {
         ZStack {
             
             BackgroundView(
-                isNight: $isNight
+                isNight: isNight
             )
             
             VStack {
@@ -72,7 +72,8 @@ struct ContentView: View {
 
 struct BackgroundView: View {
     
-    @Binding var isNight: Bool
+//    @Binding var isNight: Bool - don't actuall need @Binding b/c it's one-way binding (only need if you want 2-way)
+    var isNight: Bool
 
     var body: some View {
         
@@ -84,10 +85,9 @@ struct BackgroundView: View {
                      ? Color.gray : Color("LightBlue")],
             startPoint: .topLeading,
             endPoint: .bottomTrailing)
-        .edgesIgnoringSafeArea(.all)
+        .ignoresSafeArea()
     }
 }
-
 
 struct CityTextView: View {
     var cityName: String
@@ -106,7 +106,8 @@ struct MainWeatherStatusView: View {
     var body: some View {
         VStack (spacing: 10) {
             Image(systemName: isNight ? "moon.stars.fill" : "cloud.sun.fill")
-                .renderingMode(.original) // converts it from black to a color icon
+                .symbolRenderingMode(.multicolor)
+                // .renderingMode(.original) // converts it from black to a color icon (iOS 14 and below)
                 .resizable()
                 .aspectRatio(contentMode: .fit ) // forces the image to fit it's aspect ratio into the container (our frame below)
                 .frame(width:180, height: 180) // frame is the box we're putting our image into
@@ -119,6 +120,31 @@ struct MainWeatherStatusView: View {
     }
 }
 
+struct WeatherDayView: View {
+    
+    var dayOfTheWeek: String
+    var imageName: String
+    var temperature: Int
+    
+    var body: some View {
+        VStack {
+            Text(dayOfTheWeek)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white)
+            Image(systemName: imageName)
+                .symbolRenderingMode(.multicolor)
+//                .renderingMode(.original) // converts it from black to a color icon (iOS 14 and below)
+                .resizable()
+//                .foregroundColor(.yellow)
+//                .foregroundStyle(.pink, .orange, .blue)
+                .aspectRatio(contentMode: .fit ) // forces the image to fit it's aspect ratio into the container (our frame below)
+                .frame(width:40, height: 40)
+            Text("\(temperature)°")
+                .font(.system(size: 28, weight: .medium))
+                .foregroundColor(.white)
+        }
+    }
+}
 
 
 #Preview {
