@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct WeatherDay {
+struct ForecastDayModel : Identifiable {
+    var id: UUID = UUID()
     public var dayOfTheWeek: String
     public var imageName: String
     public var temperature: Int

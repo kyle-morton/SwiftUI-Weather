@@ -19,9 +19,15 @@ import SwiftUI
 
 struct ContentView: View {
     
-    // Structs don't hold state (views get created and destroyed all the time)
-    // @State let's swift know to keep track of this value even if the view itself is recycled
+    // Structs don't hold state (views get created and destroyed all the time) - @State let's swift know to keep track of this value even if the view itself is recycled
     @State private var isNight:Bool = false
+    private var currentWeather: CurrentWeatherModel = CurrentWeatherModel(cityName: "Cupertino, CA", temperature: 78, forecastDays: [
+        ForecastDayModel(dayOfTheWeek: "TUE", imageName: "cloud.sun.fill", temperature: 78),
+        ForecastDayModel(dayOfTheWeek: "WED", imageName: "sun.max.fill", temperature: 81),
+        ForecastDayModel(dayOfTheWeek: "THU", imageName: "cloud.drizzle.fill", temperature: 75),
+        ForecastDayModel(dayOfTheWeek: "FRI", imageName: "cloud.sun.rain.fill", temperature: 79),
+        ForecastDayModel(dayOfTheWeek: "SAT", imageName: "sun.max.fill", temperature: 83)
+    ])
     
     var body: some View {
         ZStack {
@@ -31,19 +37,17 @@ struct ContentView: View {
             )
             
             VStack {
-                CityTextView(cityName: "Cupertino, CA")
+                CityTextView(cityName: currentWeather.cityName)
                 
                 MainWeatherStatusView(
                     isNight: $isNight,
-                    temperature: 78
+                    temperature: currentWeather.temperature
                 )
                     
                 HStack(spacing:20) {
-                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "TUE", imageName: "cloud.sun.fill", temperature: 78))
-                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "WED", imageName: "sun.max.fill", temperature: 81))
-                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "THU", imageName: "cloud.drizzle.fill", temperature: 75))
-                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "FRI", imageName: "cloud.sun.rain.fill", temperature: 79))
-                    WeatherDayView(day: WeatherDay(dayOfTheWeek: "SAT", imageName: "sun.max.fill", temperature: 83))
+                    ForEach(currentWeather.forecastDays, id: \.dayOfTheWeek) { day in
+                        WeatherDayView(day: day)
+                    }
                 }
                 
                 Spacer()
@@ -57,6 +61,19 @@ struct ContentView: View {
 
                 Spacer()
             }
+        }
+        .onAppear{
+//            let testButton = WeatherButton(title: isNight ? "Button - On" : "Button - Off", textColor: Color.white, backgroundColor: Color.blue, value: $isNight)
+//            print(type(of: testButton.body))
+            
+            // This is what our weatherButton looks like in the debugger
+            // Notice the Modified Content wrappers - these are what SwiftUI does with our modifiers. Each subsequent modifier wraps the things before it
+//            Button
+//            <ModifiedContent
+//            <ModifiedContent
+//            <ModifiedContent
+//            <ModifiedContent
+//            <ModifiedContent<Text, _FrameLayout>, _BackgroundStyleModifier<AnyGradient>>, _EnvironmentKeyWritingModifier<Optional<Color>>>, _EnvironmentKeyWritingModifier<Optional<Font>>>, _ClipEffect<RoundedRectangle>>>
         }
     }
 }
@@ -121,7 +138,7 @@ struct MainWeatherStatusView: View {
 
 struct WeatherDayView: View {
     
-    var day: WeatherDay
+    var day: ForecastDayModel
     
     var body: some View {
         VStack {
